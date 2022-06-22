@@ -2,12 +2,14 @@ const { Schema, model } = require("mongoose");
 
 const TodoSchema = new Schema(
   {
-    name: { type: String, required: true },
-    is_completed: { type: Boolean, required: true },
-    group_id: { type: String, required: false },
+    user: { type: Schema.Types.ObjectId, ref: "User" },
+    task: { type: String, required: true },
+    is_completed: { type: Boolean, default: false },
+    group_id: { type: Schema.Types.ObjectId, required: false },
+    date_completed: { type: Date },
   },
   { timestamps: true }
 );
 
-const User = model("Todo", TodoSchema);
-module.exports = User;
+const Todo = model("Todo", TodoSchema);
+module.exports = Todo;

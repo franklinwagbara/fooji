@@ -1,44 +1,93 @@
 const express = require("express");
 const validateTodo = require("../../validation/validateTodo");
 const { todos, group } = require("./db");
+const Todo = require("../../models/Todo");
+const requiresAuth = require("../../middleware/permissions");
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send(todos);
+/*
+  @route  GET /api/todos/test
+  @desc   Test the todos route
+  @access Public
+*/
+router.get("/test", (req, res) => {
+  res.send("Todos route is working");
 });
 
-router.get("/:id", (req, res) => {
-  const todo = todos.find((todo) => todo.id === parseInt(req.params.id));
+/*
+  @route  GET /api/todos/
+  @desc   Get current user's todos
+  @access Private
+*/
+router.get("/", requiresAuth, async (req, res) => {
+  try {
+    const completedTodos = await Todo.find({
+      user: req.user._id,
+      is_completed: true,
+    }).sort({ date_completed: -1 });
 
-  //input validation
-  if (!todo) {
-    return res
-      .status(404)
-      .send({ error: `The todo with id = ${req.params.id} was not found!` });
+    const uncompletedTodos = await Todo.find({
+      user: req.user._id,
+      is_completed: false,
+    }).sort({ createdAt: -1 });
+
+    return res.send({
+      completed_todos: completedTodos,
+      uncompleted_todos: uncompletedTodos,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error.message);
   }
-
-  //add to database
-  return res.send(todo);
 });
 
-router.post("/", (req, res) => {
-  //input validation
-  const { error } = validateTodo(req.body);
-  if (error) {
-    return res.status(400).send(error.details[0].message);
+/*
+  @route  GET /api/todos/:id
+  @desc   Get a single current user's todo
+  @access Private
+*/
+router.get("/:id", requiresAuth, async (req, res) => {
+  try {
+    const todo = await Todo.findById({
+      user: req.user._id,
+      _id: req.params.id,
+    });
+
+    return res.send(todo);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error.message);
   }
+});
 
-  const todo = {
-    id: todos.length + 1,
-    name: req.body.name,
-    date_created: Date.now(),
-    is_completed: req.body.is_completed,
-    group_id: null,
-  };
+/*
+  @route  POST /api/todos/
+  @desc   Create a new todo
+  @access Private
+*/
+router.post("/", requiresAuth, async (req, res) => {
+  try {
+    const { error } = validateTodo(req.body);
 
-  todos.push(todo);
-  res.send(todo);
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
+    //create a new todo
+    const newTodo = new Todo({
+      user: req.user._id,
+      task: req.body.task,
+      is_completed: req.body.is_completed,
+    });
+
+    //save to the database
+    await newTodo.save();
+
+    return res.send(newTodo);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error.message);
+  }
 });
 
 router.put("/:id", (req, res) => {
