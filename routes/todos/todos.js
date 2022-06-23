@@ -90,25 +90,75 @@ router.post("/", requiresAuth, async (req, res) => {
   }
 });
 
-router.put("/:id", (req, res) => {
-  const todo = todos.find((todo) => todo.id === parseInt(req.params.id));
+/*
+  @route  PUT /api/todos/:id/complete
+  @desc   Update a single current user's todo to completed status
+  @access Private
+*/
+router.put("/:id/complete", requiresAuth, async (req, res) => {
+  try {
+    const todo = await Todo.findOne({ user: req.user._id, _id: req.params.id });
 
-  //start of: input validation
-  if (!todo) {
-    return res
-      .status(404)
-      .send({ error: `The todo with id = ${req.params.id} was not found!` });
+    if (!todo) {
+      return res.status(404).send({ error: "Todo was not found." });
+    }
+
+    console.log("todo.is_completed", todo.is_completed, todo);
+    if (todo.is_completed)
+      return res.status(400).send({ error: "Todo is already completed." });
+
+    const updatedTodo = await Todo.findOneAndUpdate(
+      {
+        user: req.user._id,
+        _id: req.params.id,
+      },
+      {
+        is_completed: true,
+        completedAt: new Date(),
+      },
+      {
+        new: true,
+      }
+    );
+
+    return res.send(updatedTodo);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error.message);
   }
+});
 
-  const { error } = validateTodo(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+/*
+  @route  PUT /api/todos/:id
+  @desc   Update a single current user's todo
+  @access Private
+*/
+router.put("/:id", requiresAuth, async (req, res) => {
+  try {
+    const todo = await Todo.findOne({ user: req.user._id, _id: req.params.id });
 
-  //end of: input validation
+    if (!todo) {
+      return res.status(404).send({ error: "Todo was not found." });
+    }
 
-  todo.name = req.body.name;
-  todo.is_completed = req.body.is_completed;
+    const updatedTodo = await Todo.findOneAndUpdate(
+      {
+        user: req.user._id,
+        _id: req.params.id,
+      },
+      {
+        task: req.body.task,
+        is_completed: req.body.is_completed,
+        completedAt: new Date(),
+      },
+      { new: true }
+    );
 
-  return res.send(todo);
+    return res.send(updatedTodo);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error.message);
+  }
 });
 
 router.delete("/:id", (req, res) => {
