@@ -10,11 +10,11 @@ const Joi = require("joi");
 */
 const validateTodo = (todo) => {
   const schema = Joi.object({
-    user: Joi.string().required(),
     task: Joi.string().min(4).required(),
     is_completed: Joi.boolean(),
     group_id: Joi.string(),
     date_completed: Joi.date(),
+    completed_at: Joi.date(),
   });
   return schema.validate(todo);
 };

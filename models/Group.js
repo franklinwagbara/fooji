@@ -4,8 +4,8 @@ const GroupSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, required: true },
     name: { type: String, required: true },
-    is_completed: { type: String, default: false },
-    date_completed: { type: Date },
+    is_completed: { type: Boolean, default: false },
+    completed_at: { type: Date },
   },
   { timestamps: true }
 );

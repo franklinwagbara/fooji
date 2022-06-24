@@ -3,9 +3,9 @@ const Joi = require("joi");
 const validateGroup = (group) => {
   const schema = Joi.object({
     name: Joi.string().min(4).required(),
-    is_completed: Joi.boolean().required(),
+    is_completed: Joi.boolean(),
   });
-  return schema.validateAsync(group);
+  return schema.validate(group);
 };
 
 module.exports = validateGroup;

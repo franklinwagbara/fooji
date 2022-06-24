@@ -6,7 +6,7 @@ const TodoSchema = new Schema(
     task: { type: String, required: true },
     is_completed: { type: Boolean, default: false },
     group_id: { type: Schema.Types.ObjectId, required: false },
-    date_completed: { type: Date },
+    completed_at: { type: Date },
   },
   { timestamps: true }
 );
