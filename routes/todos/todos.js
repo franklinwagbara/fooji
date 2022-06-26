@@ -20,7 +20,7 @@ router.get("/test", (req, res) => {
   @desc   Get current user's todos
   @access Private
 */
-router.get("/", requiresAuth, async (req, res) => {
+router.get("/current", requiresAuth, async (req, res) => {
   try {
     const completedTodos = await Todo.find({
       user: req.user._id,
@@ -66,7 +66,7 @@ router.get("/:id", requiresAuth, async (req, res) => {
   @desc   Create a new todo
   @access Private
 */
-router.post("/", requiresAuth, async (req, res) => {
+router.post("/current", requiresAuth, async (req, res) => {
   try {
     const { error } = validateTodo(req.body);
 

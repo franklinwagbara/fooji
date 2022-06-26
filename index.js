@@ -1,8 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
-require("dotenv").config();
+const cors = require("cors");
 const home = require("./routes/home/home");
 const todos = require("./routes/todos/todos");
 const auth = require("./routes/auth/auth");
@@ -13,6 +14,7 @@ const DB_URI = process.env.MONGO_URI;
 const app = express();
 
 //start of: middleware uses
+app.use(cors());
 app.use(express.json());
 app.use(helmet());
 app.use(express.urlencoded({ extended: true }));

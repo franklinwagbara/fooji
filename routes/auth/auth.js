@@ -79,6 +79,11 @@ router.post("/register", async (req, res) => {
 */
 router.post("/login", async (req, res) => {
   try {
+    const { error } = validateRegister(req.body);
+
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
     //check for the user
     const user = await User.findOne({
       email: new RegExp("^" + req.body.email + "$", "i"),

@@ -19,7 +19,7 @@ router.get("/test", (req, res) => {
     @desc   Get current user's todo groups
     @access Private
 */
-router.get("/", requiresAuth, async (req, res) => {
+router.get("/current", requiresAuth, async (req, res) => {
   try {
     const completedGroups = await Group.find({
       user: req.user._id,
@@ -64,7 +64,7 @@ router.get("/:id", requiresAuth, async (req, res) => {
     @desc   Create a new todo group for the current user
     @access Private
 */
-router.post("/", requiresAuth, async (req, res) => {
+router.post("/current", requiresAuth, async (req, res) => {
   try {
     const { error } = validateGroup(req.body);
 
