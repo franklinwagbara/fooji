@@ -10,6 +10,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axiosApi from "./../axiosApi";
 import useGlobalContext from "../GlobalContext";
+import extractErrors from "./../validation/extractErrors";
+import validateRegister from "./../validation/validateRegister";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,7 +36,7 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const { getCurrentUser, dispatch } = useGlobalContext();
@@ -42,26 +44,30 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const data = {
       email,
       username,
       password,
       confirm_password: confirmPassword,
     };
+    const { error } = validateRegister(data);
 
-    const res = await axiosApi.post("auth/register", data, {
-      withCredentials: true,
-    });
-
-    if (!res.data) return;
-
-    navigate("/dashboard");
-    getCurrentUser();
+    if (error) {
+      return setErrors(extractErrors(error));
+    }
 
     try {
+      const res = await axiosApi.post("auth/register", data, {
+        withCredentials: true,
+      });
+
+      if (!res.data) return;
+
+      navigate("/dashboard");
+      getCurrentUser();
     } catch (error) {
       console.log(error.response.data);
-      setError(error.response.data);
       dispatch({
         type: "SET_ALERT",
         payload: {
@@ -83,6 +89,8 @@ const Register = () => {
           onChange={(e) => setEmail(e.target.value)}
           type="text"
           label="Email"
+          error={errors && errors?.email ? true : false}
+          helperText={errors?.email}
           required
         />
         <TextField
@@ -91,6 +99,8 @@ const Register = () => {
           className={classes.marginTop}
           type="text"
           label="Username"
+          error={errors && errors?.username ? true : false}
+          helperText={errors?.username}
           required
         />
         <TextField
@@ -99,6 +109,8 @@ const Register = () => {
           className={classes.marginTop}
           type="password"
           label="Password"
+          error={errors && errors?.password ? true : false}
+          helperText={errors?.password}
           required
         />
         <TextField
@@ -107,6 +119,8 @@ const Register = () => {
           className={classes.marginTop}
           type="password"
           label="Confirm Password"
+          error={errors && errors?.confirm_password ? true : false}
+          helperText={errors?.confirm_password}
           required
         />
         <Button

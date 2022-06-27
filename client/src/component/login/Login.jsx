@@ -55,7 +55,6 @@ const Login = () => {
     const { error } = validateLogin(data);
 
     if (error) {
-      console.log("errroro...", error);
       return setErrors(extractErrors(error));
     }
     try {
@@ -89,7 +88,6 @@ const Login = () => {
     }
   };
 
-  console.log("logging error....", errors);
   const classes = useStyles();
   return (
     <Container className={classes.root}>
