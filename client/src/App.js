@@ -19,12 +19,21 @@ const App = () => {
       <GlobalProvider>
         <Header />
         <Alert />
-        <Routes>
-          <Route path="/" element={<Navigate replace to="/login" />} />
-          <Route path="/dashboard" element={<Main />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
+        <div style={{ minHeight: "calc(100vh - 18.5rem)" }}>
+          <Routes>
+            <Route path="/" element={<Navigate replace to="/login" />} />
+            <Route
+              path="/dashboard"
+              element={
+                <>
+                  <Main />
+                </>
+              }
+            />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </div>
         <Footer />
       </GlobalProvider>
     </ThemeProvider>

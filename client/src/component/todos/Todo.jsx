@@ -1,4 +1,4 @@
-import { Typography, makeStyles } from "@material-ui/core";
+import { Typography, makeStyles, Badge, IconButton } from "@material-ui/core";
 import ClearIcon from "@material-ui/icons/Clear";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -17,6 +17,11 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
     padding: theme.spacing(3),
     borderRadius: "1rem",
+    transition: "backdrop-filter 0.3s",
+
+    "&:hover": {
+      backdropFilter: "brightness(80%)",
+    },
   },
   clear: {
     color: theme.palette.primary.main,
@@ -30,9 +35,15 @@ const useStyles = makeStyles((theme) => ({
   delete: {
     color: theme.palette.primary.dark,
   },
+  badge: {
+    transform: "translate(-30px, -20px)",
+    "& > .MuiBadge-colorPrimary": {
+      backgroundColor: green[500],
+    },
+  },
 }));
 
-const Todo = ({ id, task, is_completed = true }) => {
+const Todo = ({ id, task, is_completed }) => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -42,20 +53,32 @@ const Todo = ({ id, task, is_completed = true }) => {
           overflow: "hidden",
           whiteSpace: "nowrap",
           marginRight: "10px",
+          textDecoration: !is_completed ? "line-through" : "",
+          fontStyle: !is_completed ? "italic" : "",
         }}
         component="span"
       >
         {task}
       </Typography>
-      <span>
+      <div>
         {is_completed ? (
           <DoneOutlineIcon className={classes.done} />
         ) : (
-          <ClearIcon className={classes.clear} />
+          <span>
+            <Badge
+              color="primary"
+              className={classes.badge}
+              badgeContent="Done!"
+            />
+            <ClearIcon
+              className={classes.clear}
+              onClick={() => alert("click me")}
+            />
+          </span>
         )}
         <EditIcon className={classes.edit} />
         <DeleteIcon className={classes.delete} />
-      </span>
+      </div>
     </div>
   );
 };
