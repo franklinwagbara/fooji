@@ -5,7 +5,7 @@ const Todos = () => {
   const { completed_todos, incomplete_todos } = useGlobalContext();
   return (
     <>
-      {completed_todos.map((todo) => (
+      {incomplete_todos.map((todo) => (
         <Todo
           key={todo._id}
           id={todo._id}
@@ -13,7 +13,7 @@ const Todos = () => {
           is_completed={todo.is_completed}
         />
       ))}
-      {incomplete_todos.map((todo) => (
+      {completed_todos.map((todo) => (
         <Todo
           key={todo._id}
           id={todo._id}

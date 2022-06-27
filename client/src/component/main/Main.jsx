@@ -1,16 +1,7 @@
 import TodoCreateForm from "../todos/TodoCreateForm";
-import {
-  Paper,
-  Button,
-  Container,
-  makeStyles,
-  TextField,
-  IconButton,
-  Icon,
-} from "@material-ui/core";
+import { Paper, Button, Container, makeStyles } from "@material-ui/core";
 import { useState, useEffect } from "react";
 import Todos from "../todos/Todos";
-import Login from "../login/Login";
 import useGlobalContext from "../../GlobalContext";
 import { useNavigate } from "react-router-dom";
 
@@ -50,7 +41,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Main = () => {
-  const [todo, setTodo] = useState("");
   const navigate = useNavigate();
 
   const { user } = useGlobalContext();
@@ -61,20 +51,12 @@ const Main = () => {
     }
   }, [user]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
-
   const classes = useStyles();
   return (
     <>
       <Container className={classes.root}>
         <div className={classes.todoContainer}>
-          <TodoCreateForm
-            value={todo}
-            setValue={setTodo}
-            onSubmit={handleSubmit}
-          />
+          <TodoCreateForm />
           <Paper elevation={4} className={classes.paperTodo}>
             <Todos />
           </Paper>

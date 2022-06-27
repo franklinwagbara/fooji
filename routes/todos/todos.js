@@ -21,7 +21,6 @@ router.get("/test", (req, res) => {
   @access Private
 */
 router.get("/current", requiresAuth, async (req, res) => {
-  console.log("tooddoo...", req.user);
   try {
     const completedTodos = await Todo.find({
       user: req.user._id,
