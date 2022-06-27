@@ -16,11 +16,12 @@ router.get("/test", (req, res) => {
 });
 
 /*
-  @route  GET /api/todos/
+  @route  GET /api/todos/current
   @desc   Get current user's todos
   @access Private
 */
 router.get("/current", requiresAuth, async (req, res) => {
+  console.log("tooddoo...", req.user);
   try {
     const completedTodos = await Todo.find({
       user: req.user._id,

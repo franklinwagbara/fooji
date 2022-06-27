@@ -1,14 +1,12 @@
 const Joi = require("joi");
 
 /*
-  Register data schema:
+  Login data schema:
     email: string
-    username: string
     password: string
-    confirm_password: string
 */
 
-const validateRegister = (data) => {
+const validateLogin = (data) => {
   const schema = Joi.object({
     email: Joi.string()
       .email({
@@ -16,14 +14,11 @@ const validateRegister = (data) => {
         tlds: { allow: ["com", "net", "org", "co"] },
       })
       .required(),
-    username: Joi.string().alphanum().min(4).max(30).required(),
     password: Joi.string()
       .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
       .required(),
-    confirm_password: Joi.ref("password"),
-  }).with("password", "confirm_password");
+  });
 
   return schema.validate(data, { abortEarly: false });
 };
-
-module.exports = validateRegister;
+export default validateLogin;

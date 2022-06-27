@@ -8,16 +8,18 @@ const Joi = require("joi");
 
 const validateLogin = (data) => {
   const schema = Joi.object({
-    email: Joi.string().email({
-      minDomainSegments: 2,
-      tlds: { allow: ["com", "net", "org", "co"] },
-    }),
-    username: Joi.string().alphanum().min(4).max(30).required(),
-    password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
-    confirm_password: Joi.ref("password"),
-  }).with("password", "confirm_password");
+    email: Joi.string()
+      .email({
+        minDomainSegments: 2,
+        tlds: { allow: ["com", "net", "org", "co"] },
+      })
+      .required(),
+    password: Joi.string()
+      .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
+      .required(),
+  });
 
-  return schema.validate(data);
+  return schema.validate(data, { abortEarly: false });
 };
 
-module.exports = validateRegister;
+module.exports = validateLogin;

@@ -8,4 +8,4 @@ const validateGroup = (group) => {
   return schema.validate(group, { abortEarly: false });
 };
 
-module.exports = validateGroup;
+export default validateGroup;

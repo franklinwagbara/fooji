@@ -65,7 +65,6 @@ const Main = () => {
     e.preventDefault();
   };
 
-  console.log(user);
   const classes = useStyles();
   return (
     <>

@@ -19,4 +19,4 @@ const validateTodo = (todo) => {
   return schema.validate(todo, { abortEarly: false });
 };
 
-module.exports = validateTodo;
+export default validateTodo;

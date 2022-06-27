@@ -6,10 +6,12 @@ import {
   Button,
 } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import useGlobalContext from "../../GlobalContext";
 
-const Header = ({ user = true }) => {
+const Header = () => {
+  const { user, logout } = useGlobalContext();
   let navigate = useNavigate();
+  console.log(user);
   return (
     <AppBar position="static">
       <Container>
@@ -21,7 +23,7 @@ const Header = ({ user = true }) => {
           >
             TODO
           </Typography>
-          {user ? (
+          {!user ? (
             <Button
               onClick={() => navigate("/login", { replace: true })}
               variant="contained"
@@ -30,7 +32,34 @@ const Header = ({ user = true }) => {
               Login
             </Button>
           ) : (
-            "Logout"
+            <span>
+              <Typography
+                style={{ marginRight: "1.5rem", fontStyle: "italic" }}
+                component="span"
+                variant="subtitle1"
+              >
+                Welcome,
+              </Typography>
+              <Typography
+                style={{ marginRight: "1.5rem" }}
+                component="span"
+                variant="h6"
+              >
+                {user?.username}
+              </Typography>
+              <Button
+                onClick={() => {
+                  const res = logout().t;
+
+                  if (res.data) navigate("../login", { replace: true });
+                  return;
+                }}
+                variant="outlined"
+                color="secondary"
+              >
+                Logout
+              </Button>
+            </span>
           )}
         </Toolbar>
       </Container>

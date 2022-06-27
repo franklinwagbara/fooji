@@ -10,6 +10,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axiosApi from "../../axiosApi";
 import useGlobalContext from "../../GlobalContext";
+import { axios } from "axios";
+import validateLogin from "./../../validation/validateLogin";
+import extractErrors from "./../../validation/extractErrors";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,32 +33,63 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState(null);
 
-  const { user } = useGlobalContext();
+  const { user, getCurrentUser, dispatch } = useGlobalContext();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, [user]);
 
-  console.log("user: ", user);
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const data = {
+      email,
+      password,
+    };
+
+    const { error } = validateLogin(data);
+
+    if (error) {
+      console.log("errroro...", error);
+      return setErrors(extractErrors(error));
+    }
     try {
       setLoading(true);
 
-      const res = await axiosApi.post("auth/login", { email, password });
+      const res = await axiosApi.post("auth/login", data, {
+        withCredentials: true,
+      });
 
-      console.log(res);
+      dispatch({
+        type: "SET_ALERT",
+        payload: {
+          open: true,
+          message: "You've logged in successfully.",
+          type: "success",
+        },
+      });
+      getCurrentUser();
       setLoading(false);
     } catch (error) {
       console.log("error catching: ", error.response.data);
-      setError(error);
+      dispatch({
+        type: "SET_ALERT",
+        payload: {
+          open: true,
+          message:
+            "Something went wrong while trying to log you in. Ensure your credentials are correct.",
+          type: "error",
+        },
+      });
     }
   };
+
+  console.log("logging error....", errors);
   const classes = useStyles();
   return (
     <Container className={classes.root}>
@@ -65,12 +99,18 @@ const Login = () => {
           onChange={(e) => setEmail(e.target.value)}
           type="text"
           label="Email"
+          error={errors && errors?.email ? true : false}
+          helperText={errors?.email}
+          required
         />
         <TextField
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           type="password"
           label="Password"
+          error={errors && errors?.password ? true : false}
+          helperText={errors?.password}
+          required
         />
         <Button
           onClick={(e) => handleSubmit(e)}

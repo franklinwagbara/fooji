@@ -1,9 +1,11 @@
 const express = require("express");
+const extractErrors = require("./../../validation/extractErrors");
 const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const validateRegister = require("../../validation/validateRegister");
 const requiresAuth = require("../../middleware/permissions");
+const validateLogin = require("../../validation/validateLogin");
 
 const router = express.Router();
 
@@ -24,7 +26,7 @@ router.post("/register", async (req, res) => {
     const { error } = validateRegister(req.body);
 
     if (error) {
-      return res.status(400).send(error.details[0].message);
+      return res.status(400).send(extractErrors(error));
     }
 
     //check for existing user
@@ -79,10 +81,10 @@ router.post("/register", async (req, res) => {
 */
 router.post("/login", async (req, res) => {
   try {
-    const { error } = validateRegister(req.body);
+    const { error } = validateLogin(req.body);
 
     if (error) {
-      return res.status(400).send(error.details[0].message);
+      return res.status(400).send(extractErrors(error));
     }
     //check for the user
     const user = await User.findOne({
@@ -125,7 +127,7 @@ router.post("/login", async (req, res) => {
     return res.send({ token: token, user: userReturned });
   } catch (error) {
     console.log(error);
-    return res.status(500).send(err.message);
+    return res.status(500).send(err?.message);
   }
 });
 

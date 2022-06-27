@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const requiresAuth = async (req, res, next) => {
   const token = req.cookies["access-token"];
   let isAuthed = false;
-
+  console.log("permission...", req.cookies["access-token"]);
   if (token) {
     try {
       const { user_id } = jwt.verify(token, process.env.JWT_SECRET);

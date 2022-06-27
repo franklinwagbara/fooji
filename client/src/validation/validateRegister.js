@@ -26,4 +26,4 @@ const validateRegister = (data) => {
   return schema.validate(data, { abortEarly: false });
 };
 
-module.exports = validateRegister;
+export default validateRegister;
