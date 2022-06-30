@@ -1,4 +1,4 @@
-import { green } from "@material-ui/core/colors";
+import { green, purple } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useTodosStyles = makeStyles((theme) => ({
@@ -38,6 +38,10 @@ const useTodosStyles = makeStyles((theme) => ({
   },
   done: {
     color: green[800],
+    cursor: "pointer",
+  },
+  editDone: {
+    color: purple[500],
     cursor: "pointer",
   },
   edit: {

@@ -4,6 +4,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import DoneOutlineIcon from "@material-ui/icons/DoneOutline";
+import DoneIcon from "@material-ui/icons/Done";
 import PropTypes from "prop-types";
 import useTodosStyles from "../todos/styles/todos.style";
 import useGlobalContext from "../../GlobalContext";
@@ -89,22 +90,44 @@ const Editor = ({
             />
           </span>
         )}
-        <EditIcon
-          onClick={() => {
-            if (newValue === "" && editorState.value !== "close") {
-              setError("Task description cannot be empty.");
-              dispatch({
-                type: "SET_ALERT",
-                payload: {
-                  open: true,
-                  message: "Something went wrong while trying to update todo.",
-                  type: "error",
-                },
-              });
-            } else editorDispatch({ type: "NEXT" });
-          }}
-          className={classes.edit}
-        />
+        {editorState.value === "open" ? (
+          <DoneIcon
+            onClick={() => {
+              if (newValue === "" && editorState.value !== "close") {
+                setError("Task description cannot be empty.");
+                dispatch({
+                  type: "SET_ALERT",
+                  payload: {
+                    open: true,
+                    message:
+                      "Something went wrong while trying to update todo.",
+                    type: "error",
+                  },
+                });
+              } else editorDispatch({ type: "NEXT" });
+            }}
+            className={classes.editDone}
+          />
+        ) : (
+          <EditIcon
+            onClick={() => {
+              if (newValue === "" && editorState.value !== "close") {
+                setError("Task description cannot be empty.");
+                dispatch({
+                  type: "SET_ALERT",
+                  payload: {
+                    open: true,
+                    message:
+                      "Something went wrong while trying to update todo.",
+                    type: "error",
+                  },
+                });
+              } else editorDispatch({ type: "NEXT" });
+            }}
+            className={classes.edit}
+          />
+        )}
+
         <DeleteIcon
           onClick={() => handleDelete(id, type, deleteTarget)}
           className={classes.delete}
