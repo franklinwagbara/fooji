@@ -113,14 +113,6 @@ export const GlobalProvider = (props) => {
       }
     } catch (error) {
       console.log(error?.response.data);
-      /* dispatch({
-        type: "SET_ALERT",
-        payload: {
-          open: true,
-          message: "Something went wrong, when trying to get current user.",
-          type: "error",
-        },
-      }); */
     }
   };
 
@@ -128,7 +120,9 @@ export const GlobalProvider = (props) => {
     try {
       const res = axiosApi
         .put(
-          `${type}/${id}/${completed ? "complete" : "incomplete"}`,
+          `${type === "group" ? "groups" : "todos"}/${id}/${
+            completed ? "complete" : "incomplete"
+          }`,
           {},
           { withCredentials: true }
         )
@@ -172,8 +166,9 @@ export const GlobalProvider = (props) => {
   const handleDelete = (id, type) => {
     try {
       if (type && type === "group") {
+        console.error("in handle delete group", type);
         axiosApi
-          .put(`${type}/removeFromGroup/${id}`, {}, { withCredentials: true })
+          .put(`todos/removeFromGroup/${id}`, {}, { withCredentials: true })
           .then((res) => {
             getCurrentUser();
             dispatch({
