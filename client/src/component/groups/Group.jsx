@@ -6,10 +6,10 @@ import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import useGlobalContext from "../../GlobalContext";
 import Todo from "../todos/Todo";
+import Editor from "../editor/Editor";
 import useGroupsStyle from "../todos/styles/groups.styled";
-import Operations from "./../operations/Operation";
 
-export default function Group(props) {
+export default function Group({ id, name, is_completed }) {
   const classes = useGroupsStyle();
 
   const { completed_todos, incomplete_todos } = useGlobalContext();
@@ -23,22 +23,17 @@ export default function Group(props) {
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography className={classes.heading}>{props.name}</Typography>
-          {/* <Operations
-            id={props._id}
-            edited={newTask}
-            setError={setError}
+          <Editor
+            id={id}
+            value={name}
             is_completed={is_completed}
-            handleComplete={handleComplete}
-            handleDelete={handleDelete}
-            state={editorState}
-            type={type}
-            editorDispatch={editorDispatch}
-          /> */}
+            type="group"
+            deleteTarget="group"
+          />
         </AccordionSummary>
         <AccordionDetails className={classes.content}>
           {todos.map((todo) => {
-            if (todo.group_id !== props.id) return;
+            if (todo.group_id !== id) return;
             return (
               <Todo
                 key={todo._id}

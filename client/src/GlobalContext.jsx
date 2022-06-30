@@ -1,6 +1,5 @@
 import { createContext, useReducer, useContext, useEffect } from "react";
 import axiosApi from "./axiosApi";
-import { axios } from "axios";
 
 const initialState = {
   user: null,
@@ -163,10 +162,38 @@ export const GlobalProvider = (props) => {
     }
   };
 
-  const handleDelete = (id, type) => {
+  const handleDelete = (id, type, deleteTarget) => {
     try {
+      if (deleteTarget && deleteTarget === "group") {
+        console.log("deletetarget ....");
+        axiosApi
+          .delete(`groups/${id}`, { withCredentials: true })
+          .then((res) => {
+            getCurrentUser();
+            dispatch({
+              type: "SET_ALERT",
+              payload: {
+                open: true,
+                message: "Group was successfully deleted.",
+                type: "success",
+              },
+            });
+          })
+          .catch((error) => {
+            console.error(error?.response.data);
+            dispatch({
+              type: "SET_ALERT",
+              payload: {
+                open: true,
+                message: "Something went while trying to delete group.",
+                type: "error",
+              },
+            });
+          });
+        return;
+      }
+
       if (type && type === "group") {
-        console.error("in handle delete group", type);
         axiosApi
           .put(`todos/removeFromGroup/${id}`, {}, { withCredentials: true })
           .then((res) => {
@@ -186,7 +213,8 @@ export const GlobalProvider = (props) => {
               type: "SET_ALERT",
               payload: {
                 open: true,
-                message: "Something went while trying to delete todo.",
+                message:
+                  "Something went while trying to remove todo from group.",
                 type: "error",
               },
             });
@@ -240,17 +268,30 @@ export const GlobalProvider = (props) => {
     type
   ) => {
     if (editorState.value === "submit") {
+      const data = {
+        groups: {
+          name: newValue,
+          is_completed,
+        },
+        todos: {
+          task: newValue,
+          is_completed,
+        },
+      };
       try {
+        console.log(
+          "error checking..",
+          type,
+          `${type && type === "group" ? "groups" : "todos"}/${id}`
+        );
         axiosApi
           .put(
-            `todos/${id}`,
-            {
-              task: newValue,
-              is_completed,
-            },
+            `${type && type === "group" ? "groups" : "todos"}/${id}`,
+            type && type === "group" ? data["groups"] : data["todos"],
             { withCredentials: true }
           )
           .then((res) => {
+            console.log("result...", newValue, res.data);
             getCurrentUser();
             dispatch({
               type: "SET_ALERT",

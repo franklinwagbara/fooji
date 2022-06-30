@@ -52,6 +52,7 @@ const CreateForm = ({ type }) => {
         .then((res) => {
           console.log(res);
           getCurrentUser();
+          setTask("");
           dispatch({
             type: "SET_ALERT",
             payload: {

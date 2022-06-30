@@ -1,13 +1,13 @@
+import { useState, useReducer, useEffect } from "react";
+import { Badge, Typography, TextField } from "@material-ui/core";
 import ClearIcon from "@material-ui/icons/Clear";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import DoneOutlineIcon from "@material-ui/icons/DoneOutline";
+import PropTypes from "prop-types";
 import useTodosStyles from "../todos/styles/todos.style";
-import { Badge, Typography, TextField } from "@material-ui/core";
 import useGlobalContext from "../../GlobalContext";
 import AddTodoToGroup from "../todos/AddTodoToGroup";
-import PropTypes from "prop-types";
-import { useState, useReducer, useEffect } from "react";
 
 const initialEditorState = {
   value: "close",
@@ -24,16 +24,7 @@ const editorReducer = (state, action) => {
   }
 };
 
-const Operations = ({
-  id,
-  value,
-  is_completed,
-  type,
-  /* setError,
-  state,
-  editorDispatch,
-  edited, */
-}) => {
+const Editor = ({ id, value, is_completed, type, deleteTarget }) => {
   const { dispatch, handleComplete, handleDelete, handleEdit } =
     useGlobalContext();
   const [editorState, editorDispatch] = useReducer(
@@ -44,10 +35,10 @@ const Operations = ({
   const [newValue, setnewValue] = useState(value);
 
   useEffect(() => {
-    handleEdit(id, editorState, editorDispatch, newValue, is_completed, "todo");
+    handleEdit(id, editorState, editorDispatch, newValue, is_completed, type);
   }, [editorState]);
 
-  const classes = useTodosStyles();
+  const classes = useTodosStyles({ type, is_completed });
   return (
     <>
       {editorState.value !== "open" ? (
@@ -100,7 +91,7 @@ const Operations = ({
           className={classes.edit}
         />
         <DeleteIcon
-          onClick={() => handleDelete(id, type)}
+          onClick={() => handleDelete(id, type, deleteTarget)}
           className={classes.delete}
         />
         {type && type === "group" ? (
@@ -115,16 +106,12 @@ const Operations = ({
   );
 };
 
-/* Operations.propTypes = {
+Editor.propTypes = {
   id: PropTypes.string.isRequired,
-  edited: PropTypes.string.isRequired,
-  setError: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired,
   is_completed: PropTypes.bool.isRequired,
-  handleComplete: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
-  state: PropTypes.object.isRequired,
-  type: PropTypes.string.isRequired,
-  editorDispatch: PropTypes.func.isRequired,
-}; */
+  type: PropTypes.string,
+  deleteTarget: PropTypes.string,
+};
 
-export default Operations;
+export default Editor;
