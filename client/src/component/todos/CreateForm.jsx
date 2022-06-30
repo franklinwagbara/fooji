@@ -2,7 +2,7 @@ import { TextField, Paper, makeStyles, IconButton } from "@material-ui/core";
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined";
 import { useState } from "react";
 import useGlobalContext from "../../GlobalContext";
-import axiosApi from "./../../axiosApi";
+import axiosApi from "../../axiosApi";
 
 const useStyles = makeStyles((theme) => ({
   createForm: {
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-const TodoCreateForm = ({ value, setValue, onSubmit }) => {
+const CreateForm = ({ type }) => {
   const [task, setTask] = useState("");
   const [error, setError] = useState(null);
 
@@ -33,15 +33,22 @@ const TodoCreateForm = ({ value, setValue, onSubmit }) => {
         type: "SET_ALERT",
         payload: {
           open: true,
-          message: "Please enter task description.",
+          message: `Please enter ${
+            type && type === "group" ? "group name" : "task description."
+          }`,
           type: "error",
         },
       });
     }
 
     try {
+      const data = type && type === "group" ? { name: task } : { task };
       axiosApi
-        .post("todos/current", { task }, { withCredentials: true })
+        .post(
+          `${type && type === "group" ? "groups" : "todos"}/current`,
+          data,
+          { withCredentials: true }
+        )
         .then((res) => {
           console.log(res);
           getCurrentUser();
@@ -49,7 +56,9 @@ const TodoCreateForm = ({ value, setValue, onSubmit }) => {
             type: "SET_ALERT",
             payload: {
               open: true,
-              message: "A new Todo was created successfully.",
+              message: `A new ${
+                type && type === "group" ? "Group" : "Todo"
+              } was created successfully.`,
               type: "success",
             },
           });
@@ -59,7 +68,9 @@ const TodoCreateForm = ({ value, setValue, onSubmit }) => {
             type: "SET_ALERT",
             payload: {
               open: true,
-              message: "Unable to create new todo.",
+              message: `Unable to create a new ${
+                type && type === "group" ? "group" : "todo"
+              }.`,
               type: "error",
             },
           })
@@ -70,7 +81,9 @@ const TodoCreateForm = ({ value, setValue, onSubmit }) => {
         type: "SET_ALERT",
         payload: {
           open: true,
-          message: "Unable to create new todo.",
+          message: `Unable to create a new ${
+            type && type === "group" ? "group" : "todo"
+          }.`,
           type: "error",
         },
       });
@@ -86,15 +99,21 @@ const TodoCreateForm = ({ value, setValue, onSubmit }) => {
         onChange={(e) => setTask(e.target.value)}
         className={classes.textField}
         variant="outlined"
-        label="Enter task description"
+        label={
+          type && type === "group"
+            ? "Enter Group name"
+            : "Enter task description"
+        }
         error={error && task === "" ? true : false}
         fullWidth
       />
       <IconButton onClick={(e) => handleSubmit(e)}>
-        <AddCircleOutlinedIcon color="primary" />
+        <AddCircleOutlinedIcon
+          color={type && type === "group" ? "secondary" : "primary"}
+        />
       </IconButton>
     </Paper>
   );
 };
 
-export default TodoCreateForm;
+export default CreateForm;

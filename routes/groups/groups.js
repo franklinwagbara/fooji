@@ -21,17 +21,17 @@ router.get("/test", (req, res) => {
 */
 router.get("/current", requiresAuth, async (req, res) => {
   try {
-    const completedGroups = await Group.find({
+    const completed_groups = await Group.find({
       user: req.user._id,
       is_completed: true,
     }).sort({ completed_at: -1 });
 
-    const incompleteGroups = await Group.find({
+    const incomplete_groups = await Group.find({
       user: req.user._id,
       is_completed: false,
     }).sort({ createAt: -1 });
 
-    return res.send({ completedGroups, incompleteGroups });
+    return res.send({ completed_groups, incomplete_groups });
   } catch (error) {
     console.log(error);
     return res.status(500).send(error.message);

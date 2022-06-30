@@ -203,15 +203,15 @@ router.put("/:id/incomplete", requiresAuth, async (req, res) => {
 });
 
 /*
-  @route  POST /api/todos/addToGroup/:to_id/:group_id
+  @route  PUT /api/todos/addToGroup/:todo_id/:group_id
   @desc   Add todo to a group
   @access Private
 */
-router.post("/addToGroup/:to_id/:group_id", requiresAuth, async (req, res) => {
+router.put("/addToGroup/:todo_id/:group_id", requiresAuth, async (req, res) => {
   try {
     const todo = await Todo.findOne({
       user: req.user._id,
-      _id: req.params.to_id,
+      _id: req.params.todo_id,
     });
 
     const group = await Group.findOne({
@@ -225,7 +225,7 @@ router.post("/addToGroup/:to_id/:group_id", requiresAuth, async (req, res) => {
         .send({ error: "Todo or Group does not exist in database." });
 
     const updatedTodo = await Todo.findOneAndUpdate(
-      { user: req.user._id, _id: req.params.to_id },
+      { user: req.user._id, _id: req.params.todo_id },
       {
         group_id: req.params.group_id,
       },
@@ -240,15 +240,15 @@ router.post("/addToGroup/:to_id/:group_id", requiresAuth, async (req, res) => {
 });
 
 /*
-  @route  POST /api/todos/removeFromGroup/:to_id
+  @route  PUT /api/todos/removeFromGroup/:todo_id
   @desc   Removes todo from a group
   @access Private
 */
-router.post("/removeFromGroup/:to_id", requiresAuth, async (req, res) => {
+router.put("/removeFromGroup/:todo_id", requiresAuth, async (req, res) => {
   try {
     const todo = await Todo.findOne({
       user: req.user._id,
-      _id: req.params.to_id,
+      _id: req.params.todo_id,
     });
 
     if (!todo)
@@ -257,7 +257,7 @@ router.post("/removeFromGroup/:to_id", requiresAuth, async (req, res) => {
         .send({ error: "Todo or Group does not exist in database." });
 
     const updatedTodo = await Todo.findOneAndUpdate(
-      { user: req.user._id, _id: req.params.to_id },
+      { user: req.user._id, _id: req.params.todo_id },
       {
         group_id: null,
       },

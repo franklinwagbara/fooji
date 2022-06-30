@@ -34,6 +34,16 @@ const globalReducer = (state, action) => {
         ...state,
         incomplete_todos: action.payload,
       };
+    case "SET_COMPLETED_GROUPS":
+      return {
+        ...state,
+        completed_groups: action.payload,
+      };
+    case "SET_INCOMPLETE_GROUPS":
+      return {
+        ...state,
+        incomplete_groups: action.payload,
+      };
     case "SET_ALERT":
       return {
         ...state,
@@ -74,8 +84,12 @@ export const GlobalProvider = (props) => {
           withCredentials: true,
         });
 
-        console.log("todoesRes", todosRes);
-        if (todosRes.data) {
+        const groupsRes = await axiosApi.get("groups/current", {
+          withCredentials: true,
+        });
+
+        console.log("groups....", groupsRes);
+        if (todosRes.data && groupsRes.data) {
           dispatch({
             type: "SET_COMPLETED_TODOS",
             payload: todosRes.data.completed_todos,
@@ -84,6 +98,16 @@ export const GlobalProvider = (props) => {
           dispatch({
             type: "SET_INCOMPLETE_TODOS",
             payload: todosRes.data.incomplete_todos,
+          });
+
+          dispatch({
+            type: "SET_COMPLETED_GROUPS",
+            payload: groupsRes.data.completed_groups,
+          });
+
+          dispatch({
+            type: "SET_INCOMPLETE_GROUPS",
+            payload: groupsRes.data.incomplete_groups,
           });
         }
       }
@@ -97,6 +121,175 @@ export const GlobalProvider = (props) => {
           type: "error",
         },
       }); */
+    }
+  };
+
+  const handleComplete = (id, completed, type) => {
+    try {
+      const res = axiosApi
+        .put(
+          `${type}/${id}/${completed ? "complete" : "incomplete"}`,
+          {},
+          { withCredentials: true }
+        )
+        .then((res) => {
+          getCurrentUser();
+          dispatch({
+            type: "SET_ALERT",
+            payload: {
+              open: true,
+              message: "Todo completion status update was successful.",
+              type: "success",
+            },
+          });
+        })
+        .catch((error) => {
+          console.log(error?.response.data);
+          dispatch({
+            type: "SET_ALERT",
+            payload: {
+              open: true,
+              message:
+                "Something went while trying to update todo completion status.",
+              type: "error",
+            },
+          });
+        });
+    } catch (error) {
+      console.log(error?.response.data);
+      dispatch({
+        type: "SET_ALERT",
+        payload: {
+          open: true,
+          message:
+            "Something went while trying to update todo completion status.",
+          type: "error",
+        },
+      });
+    }
+  };
+
+  const handleDelete = (id, type) => {
+    try {
+      if (type && type === "group") {
+        axiosApi
+          .put(`${type}/removeFromGroup/${id}`, {}, { withCredentials: true })
+          .then((res) => {
+            getCurrentUser();
+            dispatch({
+              type: "SET_ALERT",
+              payload: {
+                open: true,
+                message: "Todo was successfully removed from group.",
+                type: "success",
+              },
+            });
+          })
+          .catch((error) => {
+            console.error(error?.response.data);
+            dispatch({
+              type: "SET_ALERT",
+              payload: {
+                open: true,
+                message: "Something went while trying to delete todo.",
+                type: "error",
+              },
+            });
+          });
+        return;
+      }
+
+      axiosApi
+        .delete(`todos/${id}`, { withCredentials: true })
+        .then((res) => {
+          getCurrentUser();
+          dispatch({
+            type: "SET_ALERT",
+            payload: {
+              open: true,
+              message: "Todo deletion was successful.",
+              type: "success",
+            },
+          });
+        })
+        .catch((error) => {
+          console.log(error?.response.data);
+          dispatch({
+            type: "SET_ALERT",
+            payload: {
+              open: true,
+              message: "Something went while trying to delete todo.",
+              type: "error",
+            },
+          });
+        });
+    } catch (error) {
+      console.log(error?.response.data);
+      dispatch({
+        type: "SET_ALERT",
+        payload: {
+          open: true,
+          message: "Something went while trying to delete todo.",
+          type: "error",
+        },
+      });
+    }
+  };
+
+  const handleEdit = (
+    id,
+    editorState,
+    editorDispatch,
+    newValue,
+    is_completed,
+    type
+  ) => {
+    if (editorState.value === "submit") {
+      try {
+        axiosApi
+          .put(
+            `todos/${id}`,
+            {
+              task: newValue,
+              is_completed,
+            },
+            { withCredentials: true }
+          )
+          .then((res) => {
+            getCurrentUser();
+            dispatch({
+              type: "SET_ALERT",
+              payload: {
+                open: true,
+                message: "Todo update was successful.",
+                type: "success",
+              },
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            dispatch({
+              type: "SET_ALERT",
+              payload: {
+                open: true,
+                message: "Something went wrong while trying to update todo.",
+                type: "error",
+              },
+            });
+          });
+      } catch (error) {
+        console.log(error.response.data);
+        dispatch({
+          type: "SET_ALERT",
+          payload: {
+            open: true,
+            message: "Something went wrong while trying to update todo.",
+            type: "error",
+          },
+        });
+      }
+
+      editorDispatch({ type: "NEXT" });
     }
   };
 
@@ -131,6 +324,9 @@ export const GlobalProvider = (props) => {
     getCurrentUser,
     logout,
     dispatch,
+    handleComplete,
+    handleDelete,
+    handleEdit,
   };
   return (
     <GlobalContext.Provider value={value}>

@@ -1,9 +1,10 @@
-import TodoCreateForm from "../todos/TodoCreateForm";
+import CreateForm from "../todos/CreateForm";
 import { Paper, Button, Container, makeStyles } from "@material-ui/core";
 import { useState, useEffect } from "react";
 import Todos from "../todos/Todos";
 import useGlobalContext from "../../GlobalContext";
 import { useNavigate } from "react-router-dom";
+import Groups from "../groups/Groups";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,14 +57,14 @@ const Main = () => {
     <>
       <Container className={classes.root}>
         <div className={classes.todoContainer}>
-          <TodoCreateForm />
+          <CreateForm />
           <Paper elevation={4} className={classes.paperTodo}>
             <Todos />
           </Paper>
         </div>
         <Paper elevation={4} className={classes.paperGroup}>
-          <Button>Btn</Button>
-          <Button>Btn</Button>
+          <CreateForm type="group" />
+          <Groups />
         </Paper>
       </Container>
     </>
