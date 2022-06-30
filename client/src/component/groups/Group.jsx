@@ -41,6 +41,7 @@ export default function Group({ id, name, is_completed }) {
                 task={todo.task}
                 is_completed={todo.is_completed}
                 type="group"
+                updateTarget="todo"
               />
             );
           })}

@@ -68,7 +68,6 @@ export default function AddTodoToGroup({ todo_id }) {
           });
         })
         .catch((error) => {
-          console.log(error.response);
           dispatch({
             type: "SET_ALERT",
             payload: {
@@ -104,7 +103,6 @@ export default function AddTodoToGroup({ todo_id }) {
     setOpen(false);
   };
 
-  console.log("add to group called", group._id);
   return (
     <>
       <AddIcon onClick={handleOpen} className={classes.add} />

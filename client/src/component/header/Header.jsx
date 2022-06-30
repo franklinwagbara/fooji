@@ -11,7 +11,6 @@ import useGlobalContext from "../../GlobalContext";
 const Header = () => {
   const { user, logout } = useGlobalContext();
   let navigate = useNavigate();
-  console.log(user);
   return (
     <AppBar position="static">
       <Container>

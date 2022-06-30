@@ -50,7 +50,6 @@ const CreateForm = ({ type }) => {
           { withCredentials: true }
         )
         .then((res) => {
-          console.log(res);
           getCurrentUser();
           setTask("");
           dispatch({

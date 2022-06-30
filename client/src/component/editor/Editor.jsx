@@ -24,7 +24,14 @@ const editorReducer = (state, action) => {
   }
 };
 
-const Editor = ({ id, value, is_completed, type, deleteTarget }) => {
+const Editor = ({
+  id,
+  value,
+  is_completed,
+  type,
+  deleteTarget,
+  updateTarget,
+}) => {
   const { dispatch, handleComplete, handleDelete, handleEdit } =
     useGlobalContext();
   const [editorState, editorDispatch] = useReducer(
@@ -35,7 +42,15 @@ const Editor = ({ id, value, is_completed, type, deleteTarget }) => {
   const [newValue, setnewValue] = useState(value);
 
   useEffect(() => {
-    handleEdit(id, editorState, editorDispatch, newValue, is_completed, type);
+    handleEdit(
+      id,
+      editorState,
+      editorDispatch,
+      newValue,
+      is_completed,
+      type,
+      updateTarget
+    );
   }, [editorState]);
 
   const classes = useTodosStyles({ type, is_completed });
@@ -58,7 +73,7 @@ const Editor = ({ id, value, is_completed, type, deleteTarget }) => {
       <div>
         {!is_completed ? (
           <DoneOutlineIcon
-            onClick={() => handleComplete(id, true, type)}
+            onClick={() => handleComplete(id, true, type, updateTarget)}
             className={classes.done}
           />
         ) : (
@@ -69,7 +84,7 @@ const Editor = ({ id, value, is_completed, type, deleteTarget }) => {
               badgeContent="Done!"
             />
             <ClearIcon
-              onClick={() => handleComplete(id, false, type)}
+              onClick={() => handleComplete(id, false, type, updateTarget)}
               className={classes.clear}
             />
           </span>
@@ -112,6 +127,7 @@ Editor.propTypes = {
   is_completed: PropTypes.bool.isRequired,
   type: PropTypes.string,
   deleteTarget: PropTypes.string,
+  updateTarget: PropTypes.string,
 };
 
 export default Editor;

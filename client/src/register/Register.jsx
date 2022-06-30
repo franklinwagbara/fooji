@@ -67,7 +67,7 @@ const Register = () => {
       navigate("/dashboard");
       getCurrentUser();
     } catch (error) {
-      console.log(error.response.data);
+      console.error(error.response.data);
       dispatch({
         type: "SET_ALERT",
         payload: {

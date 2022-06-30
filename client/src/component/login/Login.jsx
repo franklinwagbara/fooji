@@ -75,7 +75,6 @@ const Login = () => {
       getCurrentUser();
       setLoading(false);
     } catch (error) {
-      console.log("error catching: ", error.response.data);
       dispatch({
         type: "SET_ALERT",
         payload: {

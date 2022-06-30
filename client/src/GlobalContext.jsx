@@ -87,7 +87,6 @@ export const GlobalProvider = (props) => {
           withCredentials: true,
         });
 
-        console.log("groups....", groupsRes);
         if (todosRes.data && groupsRes.data) {
           dispatch({
             type: "SET_COMPLETED_TODOS",
@@ -111,17 +110,21 @@ export const GlobalProvider = (props) => {
         }
       }
     } catch (error) {
-      console.log(error?.response.data);
+      console.error(error?.response.data);
     }
   };
 
-  const handleComplete = (id, completed, type) => {
+  const handleComplete = (id, completed, type, updateTarget) => {
     try {
       const res = axiosApi
         .put(
-          `${type === "group" ? "groups" : "todos"}/${id}/${
-            completed ? "complete" : "incomplete"
-          }`,
+          `${
+            type &&
+            type === "group" &&
+            (!updateTarget || updateTarget !== "todo")
+              ? "groups"
+              : "todos"
+          }/${id}/${completed ? "complete" : "incomplete"}`,
           {},
           { withCredentials: true }
         )
@@ -131,13 +134,19 @@ export const GlobalProvider = (props) => {
             type: "SET_ALERT",
             payload: {
               open: true,
-              message: "Todo completion status update was successful.",
+              message: `${
+                type &&
+                type === "group" &&
+                (!updateTarget || updateTarget !== "todo")
+                  ? "Group"
+                  : "Todo"
+              }Todo completion status update was successful.`,
               type: "success",
             },
           });
         })
         .catch((error) => {
-          console.log(error?.response.data);
+          console.error(error?.response.data);
           dispatch({
             type: "SET_ALERT",
             payload: {
@@ -149,7 +158,7 @@ export const GlobalProvider = (props) => {
           });
         });
     } catch (error) {
-      console.log(error?.response.data);
+      console.error(error?.response.data);
       dispatch({
         type: "SET_ALERT",
         payload: {
@@ -165,7 +174,6 @@ export const GlobalProvider = (props) => {
   const handleDelete = (id, type, deleteTarget) => {
     try {
       if (deleteTarget && deleteTarget === "group") {
-        console.log("deletetarget ....");
         axiosApi
           .delete(`groups/${id}`, { withCredentials: true })
           .then((res) => {
@@ -236,7 +244,7 @@ export const GlobalProvider = (props) => {
           });
         })
         .catch((error) => {
-          console.log(error?.response.data);
+          console.error(error?.response.data);
           dispatch({
             type: "SET_ALERT",
             payload: {
@@ -247,7 +255,7 @@ export const GlobalProvider = (props) => {
           });
         });
     } catch (error) {
-      console.log(error?.response.data);
+      console.error(error?.response.data);
       dispatch({
         type: "SET_ALERT",
         payload: {
@@ -265,7 +273,8 @@ export const GlobalProvider = (props) => {
     editorDispatch,
     newValue,
     is_completed,
-    type
+    type,
+    updateTarget
   ) => {
     if (editorState.value === "submit") {
       const data = {
@@ -279,19 +288,23 @@ export const GlobalProvider = (props) => {
         },
       };
       try {
-        console.log(
-          "error checking..",
-          type,
-          `${type && type === "group" ? "groups" : "todos"}/${id}`
-        );
         axiosApi
           .put(
-            `${type && type === "group" ? "groups" : "todos"}/${id}`,
-            type && type === "group" ? data["groups"] : data["todos"],
+            `${
+              type &&
+              type === "group" &&
+              (!updateTarget || updateTarget !== "todo")
+                ? "groups"
+                : "todos"
+            }/${id}`,
+            type &&
+              type === "group" &&
+              (!updateTarget || updateTarget !== "todo")
+              ? data["groups"]
+              : data["todos"],
             { withCredentials: true }
           )
           .then((res) => {
-            console.log("result...", newValue, res.data);
             getCurrentUser();
             dispatch({
               type: "SET_ALERT",
@@ -303,7 +316,6 @@ export const GlobalProvider = (props) => {
             });
           })
           .catch((error) => {
-            console.log(error);
             dispatch({
               type: "SET_ALERT",
               payload: {
@@ -314,7 +326,7 @@ export const GlobalProvider = (props) => {
             });
           });
       } catch (error) {
-        console.log(error.response.data);
+        console.error(error.response.data);
         dispatch({
           type: "SET_ALERT",
           payload: {
@@ -343,7 +355,7 @@ export const GlobalProvider = (props) => {
       });
       getCurrentUser();
     } catch (error) {
-      console.log(error?.response.data);
+      console.error(error?.response.data);
       dispatch({
         type: "SET_ALERT",
         payload: {
