@@ -23,7 +23,11 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.resolve(__dirname, "./client/build")));
