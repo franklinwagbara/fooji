@@ -13,7 +13,7 @@ export default function Group({ id, name, is_completed }) {
   const classes = useGroupsStyle();
 
   const { completed_todos, incomplete_todos } = useGlobalContext();
-  const todos = completed_todos.concat(incomplete_todos);
+  const todos = incomplete_todos.concat(completed_todos);
 
   return (
     <div className={classes.root}>

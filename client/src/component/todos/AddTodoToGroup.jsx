@@ -43,7 +43,7 @@ export default function AddTodoToGroup({ todo_id }) {
 
   const { completed_groups, incomplete_groups, dispatch, getCurrentUser } =
     useGlobalContext();
-  const groups = completed_groups.concat(incomplete_groups);
+  const groups = incomplete_groups.concat(completed_groups);
 
   const handleSubmit = (e) => {
     e.preventDefault();

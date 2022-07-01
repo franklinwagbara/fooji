@@ -8,6 +8,7 @@ const home = require("./routes/home/home");
 const todos = require("./routes/todos/todos");
 const auth = require("./routes/auth/auth");
 const groups = require("./routes/groups/groups");
+const path = require("path");
 
 const PORT = process.env.PORT || 3000;
 const DB_URI = process.env.MONGO_URI;
@@ -25,12 +26,17 @@ app.use(express.json());
 app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(express.static(path.resolve(__dirname, "./client/build")));
 //end of: middleware uses
 
 app.use("/api/", home);
 app.use("/api/auth/", auth);
 app.use("/api/todos/", todos);
 app.use("/api/groups/", groups);
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
+});
 
 console.log("\nConnecting to database...");
 mongoose
