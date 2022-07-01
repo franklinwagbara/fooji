@@ -17,7 +17,7 @@ const app = express();
 //start of: middleware uses
 app.use(
   cors({
-    origin: "*",
+    origin: "https://franklin-wagbara-todo-app.herokuapp.com",
     credentials: true, //access-control-allow-credentials:true
     optionSuccessStatus: 200,
   })
