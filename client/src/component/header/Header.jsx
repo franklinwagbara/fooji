@@ -48,7 +48,7 @@ const Header = () => {
               </Typography>
               <Button
                 onClick={() => {
-                  const res = logout().t;
+                  const res = logout();
 
                   if (res.data) navigate("../login", { replace: true });
                   return;
